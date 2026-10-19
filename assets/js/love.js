@@ -180,6 +180,11 @@
         },
         hover: function(x, y) {
             var ctx = this.tree.ctx;
+            x = Math.floor(x);
+            y = Math.floor(y);
+            if (x < 0 || y < 0 || x >= this.tree.width || y >= this.tree.height) {
+                return false;
+            }
             var pixel = ctx.getImageData(x, y, 1, 1);
             return pixel.data[3] == 255
         }

@@ -3,8 +3,9 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="image/favicon.ico">
-    <title>♥ Cậu Ơi! ♥</title>
+    <title>♥ Em Ơi! ♥</title>
     <link rel="icon" href="assets/img/icon-facebook-cute.png" type="image/x-icon" />
     <link type="text/css" rel="stylesheet" href="assets/css/default.css">
     <script type="text/javascript" src="assets/js/jquery.min.js"></script>
@@ -26,27 +27,27 @@
 </head>
 
 <body>
-    <audio autoplay="autoplay">
-        <source src="assets/music/I-Do-911.mp3" type="audio/mp3" />
+    <audio id="bg-music" autoplay="autoplay" preload="auto">
+        <source src="assets/music/I-Do-911.mp3" type="audio/mpeg" />
     </audio>
     <div id="main">
         <div id="wrap">
             <div id="text">
                 <div id="code">
-                    <font color="#0000FF"><span class="say"> Hey girl!</span><br>
+                    <font color="#0000FF"><span class="say"> Chúc mừng sinh nhật Em! 🎂</span><br>
                         <span class="say"> </span><br>
-                        <span class="say">Today is yours and so is every other day. !...</span><br>
-                        <span class="say"> Give me a password to log into your heart :)</span><br>
-                        <span class="say"> If anyone asks me what I like, I will answer out loud that I like you!.
-                            !</span><br>
-                        <span class="say"> I love you for no reason, because you are yourself!</span><br>
-                        <span class="say"> Having been with me for so long, have you liked me?</span><br>
-                        <span class="say"> If you don’t mind, be my lover!</span><br>
-                        <span class="say"> I won’t tell you that I like you.♥</span><br>
-                        <span class="say"> Give me your answer! ♥</span><br>
-                        <span class="say"> My heart sobs because of you!</span><br>
+                        <span class="say"> Hôm nay là ngày thật đặc biệt — ngày Em đến với thế giới này.</span><br>
+                        <span class="say"> Chúc Em tuổi mới luôn vui vẻ, bình an và gặp thật nhiều điều may mắn.</span><br>
+                        <span class="say"> Mong mọi ước mơ của Em sẽ dần trở thành hiện thực.</span><br>
+                        <span class="say"> Chúc mỗi ngày của Em đều ngập tràn tiếng cười và yêu thương.</span><br>
+                        <span class="say"> Cảm ơn Em vì đã luôn là một người thật đặc biệt.</span><br>
+                        <span class="say"> Hãy luôn tự tin, rạng rỡ và sống đúng với điều Em yêu thích nhé!</span><br>
+                        <span class="say"> Chúc Em có một sinh nhật thật đáng nhớ bên những người thương yêu.</span><br>
+                        <span class="say"> Tuổi mới thật nhiều niềm vui và những hành trình tuyệt vời nha! ♥</span><br>
+                        <span class="say"> Chúc mừng sinh nhật Em! ♥</span><br>
+                        <span class="say"> Mong những điều tốt đẹp nhất sẽ luôn đến với Em.</span><br>
                         <span class="say"> </span><br>
-                        <span class="say"><span class="space"></span>♥ I love you ! ♥</span>
+                        <span class="say"><span class="space"></span>♥ Happy Birthday, Em! ♥</span>
                     </font>
                     </p>
                 </div>
@@ -54,7 +55,7 @@
             <div id="clock-box">
                 <span class="STYLE1"></span>
                 <font color="#FF0000"></font>
-                <span class="STYLE1"> - Time of love...</span>
+                <span class="STYLE1"> - Huyền Trân đã có mặt trên thế giới nhỏ bé này</span>
                 <div id="clock"></div>
             </div>
             <canvas id="canvas" width="1100" height="680"></canvas>
@@ -74,8 +75,8 @@
                 return false;
             }
 
-            var width = canvas.width();
-            var height = canvas.height();
+            var width = 1100;
+            var height = 680;
             canvas.attr("width", width);
             canvas.attr("height", height);
             var opts = {
@@ -119,21 +120,36 @@
             var foot = tree.footer;
             var hold = 1;
 
+            function canvasPoint(e) {
+                var rect = canvas[0].getBoundingClientRect();
+                return {
+                    x: (e.clientX - rect.left) * canvas[0].width / rect.width,
+                    y: (e.clientY - rect.top) * canvas[0].height / rect.height
+                };
+            }
+
+            function hitsSeed(point) {
+                var dx = point.x - seed.heart.point.x;
+                var dy = point.y - seed.heart.point.y;
+                return seed.hover(point.x, point.y) || dx * dx + dy * dy <= 45 * 45;
+            }
+
             canvas.click(function (e) {
-                var offset = canvas.offset(), x, y;
-                x = e.pageX - offset.left;
-                y = e.pageY - offset.top;
-                if (seed.hover(x, y)) {
+                var point = canvasPoint(e);
+                if (hitsSeed(point)) {
                     hold = 0;
+                    var music = document.getElementById("bg-music");
+                    var playback = music.play();
+                    if (playback && playback.catch) {
+                        playback.catch(function () {});
+                    }
                     canvas.unbind("click");
                     canvas.unbind("mousemove");
                     canvas.removeClass('hand');
                 }
             }).mousemove(function (e) {
-                var offset = canvas.offset(), x, y;
-                x = e.pageX - offset.left;
-                y = e.pageY - offset.top;
-                canvas.toggleClass('hand', seed.hover(x, y));
+                var point = canvasPoint(e);
+                canvas.toggleClass('hand', seed.hover(point.x, point.y));
             });
 
             var seedAnimate = eval(Jscex.compile("async", function () {
@@ -174,8 +190,15 @@
                 }
                 foot.draw();
                 tree.snapshot("p2", 500, 0, 610, 680);
+                var wrap = canvas.parent()[0];
+                var canvasTop = canvas[0].getBoundingClientRect().top - wrap.getBoundingClientRect().top;
 
-                canvas.parent().css("background", "url(" + tree.toDataURL('image/png') + ")");
+                canvas.parent().css({
+                    "background-image": "url(" + tree.toDataURL('image/png') + ")",
+                    "background-size": "100% auto",
+                    "background-position": "center " + canvasTop + "px",
+                    "background-repeat": "no-repeat"
+                });
                 canvas.css("background", "#ffe");
                 $await(Jscex.Async.sleep(300));
                 canvas.css("background", "none");
@@ -193,7 +216,7 @@
 
             var textAnimate = eval(Jscex.compile("async", function () {
                 var together = new Date();
-                together.setFullYear(2002, 7, 30);
+                together.setFullYear(2005, 9, 22);
                 together.setHours(0);
                 together.setMinutes(0);
                 together.setSeconds(0);
